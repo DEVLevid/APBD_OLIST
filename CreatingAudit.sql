@@ -9,7 +9,6 @@ CREATE TABLE order_audit (
     new_status VARCHAR(50)
 );
 
-
 DELIMITER $$
 
 CREATE TRIGGER trigger_audit_order
