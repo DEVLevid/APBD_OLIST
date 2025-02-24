@@ -1,4 +1,4 @@
--- criar tabela de auditoria
+
 CREATE TABLE order_audit (
     audit_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
@@ -10,8 +10,6 @@ CREATE TABLE order_audit (
 );
 
 
-
--- criar trigger para capturar mudanças na tabela order
 DELIMITER $$
 
 CREATE TRIGGER trigger_audit_order
@@ -48,8 +46,6 @@ END $$
 
 DELIMITER ;
 
-
--- testando
 UPDATE `order` 
 SET order_status = 'delivered'
 WHERE order_id = '0010dedd556712d7bb69a19cb7bbd37a';
