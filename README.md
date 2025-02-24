@@ -12,4 +12,4 @@ O repositório é composto por scripts SQL que envolvem as seguintes etapas prin
 - **Otimização de Consultas**: Melhorias realizadas para otimizar o tempo de execução das consultas, utilizando índices, reescrita de queries e funções específicas.
 - **Auditoria**: Implementação de auditoria para rastrear alterações no banco de dados, garantindo integridade e rastreabilidade dos dados.
 
-Para uma explicação detalhada sobre a construção do banco, processos de otimização e auditoria, consulte o [relatório completo]([relatorio.md](https://github.com/DEVLevid/APBD_OLIST/blob/main/Relatorio.md)).
+Para uma explicação detalhada sobre a construção do banco, processos de otimização e auditoria, consulte o [relatório completo](https://github.com/DEVLevid/APBD_OLIST/blob/main/Relatorio.md).
