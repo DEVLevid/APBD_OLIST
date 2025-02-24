@@ -1,115 +1,111 @@
-# Database Olist 
+# Relatório do Banco de Dados Olist
 
-### A conexão com o banco e todos os comandos foram feitos utilizando o MySQL Workbench.
+### Conexão e Execução de Comandos
 
-### Estrutura do banco
+O banco de dados foi acessado e manipulado utilizando o MySQL Workbench, onde todas as operações foram realizadas por meio de comandos SQL.
 
-![olist_structure](https://github.com/user-attachments/assets/ddb4089f-119e-4c8c-bcf5-e35480f7d11b)
+### 1. Restauração do Banco de Dados
 
-
-### 1. Restaurar o banco de dados:
-O banco de dados foi restaurado utilizando os comandos abaixo e rodando o arquivo fornecido.
+Para restaurar o banco de dados, foi necessário executar os comandos abaixo, seguidos pela execução do arquivo SQL fornecido:
 ``` sql
 CREATE DATABASE olist;
 USE olist;
 ```
-E rodei o script olist.sql.
+Em seguida, o script `olist.sql` foi rodado para a reconstituição das tabelas e dados.
 
-### 2. Criar um usuário para o pessoal de Business Intelligence:
-Utilizei os comandos: 
-- `CREATE USER` -> para criar o usuario
-- `GRANT SELECT ON` -> para dar permissão de consulta
-- `REVOKE INSERT, UPDATE, DELETE` -> para remover as permissões
-- `REVOKE CREATE, ALTER, DROP` -> para remover as permissões
-- `FLUSH PRIVILEGES` -> para atualizar as permissões
+### 2. Criação de Usuário para Business Intelligence
 
-### 3. Chaves e Restrições:
+Foi criado um novo usuário com permissões restritas para a equipe de Business Intelligence utilizando os comandos:
+- `CREATE USER` 
+- `GRANT SELECT ON` 
+- `REVOKE INSERT, UPDATE, DELETE` 
+- `REVOKE CREATE, ALTER, DROP` 
+- `FLUSH PRIVILEGES`
 
-#### Remoção de duplicatas: 
-As tabelas estavam com várias duplicatas, então foi necessário removê-las antes de criar as PK e FK, para cada tabela (customer, geo_location, seller, product, olist.order, order_item, order_review), adicionei uma coluna temporária id do tipo SERIAL para identificar as linhas duplicadas. Em seguida, utilizei consultas com a função ROW_NUMBER() para identificar e remover as duplicatas, mantendo apenas uma ocorrência de cada registro único.
+### 3. Criação de Chaves e Restrições
 
-#### Atualização de dados: 
-Fiz atualizações nas colunas de cidade e estado para garantir a consistência dos dados, convertendo as cidades para minúsculas e os estados para maiúsculas.
+#### Eliminação de Registros Duplicados
+Durante a análise das tabelas, foi observado que algumas contavam com registros duplicados. Para resolver esse problema, foi criada uma coluna temporária `id` do tipo SERIAL, a qual foi utilizada para identificar as duplicatas. Com o auxílio da função `ROW_NUMBER()`, conseguimos eliminar as duplicações, mantendo apenas uma ocorrência por registro.
 
-#### Criação das chaves primárias: 
-Após a remoção das duplicatas, criei as chaves primárias para cada tabela:
-- `customer`: pk_customer na coluna customer_id.
-- `geo_location`: pk_geo_location nas colunas geolocation_zip_code_prefix, geolocation_city, e geolocation_state.
-- `seller`: pk_seller na coluna seller_id.
-- `product`: pk_product na coluna product_id.
-- `olist.order`: pk_order na coluna order_id.
-- `order_item`: pk_order_item nas colunas order_id e product_id.
-- `order_review`: pk_order_review nas colunas review_id e order_id.
+#### Atualização de Dados
+A consistência dos dados foi garantida através da conversão dos nomes das cidades para minúsculas e dos estados para maiúsculas.
 
-#### Criação das chaves estrangeiras: 
-Adicionei chaves estrangeiras para garantir a integridade referencial entre as tabelas:
-- `customer`: fk_customer_geo_location referenciando geo_location nas colunas customer_zip_code_prefix, customer_city, e customer_state.
-- `seller`: fk_seller_geo_location referenciando geo_location nas colunas seller_zip_code_prefix, seller_city, e seller_state.
-- `order_item`: fk_order_item_seller referenciando seller na coluna seller_id.
-- `olist.order`: fk_order_customer referenciando customer na coluna customer_id.
-- `order_item`: fk_order_item_order referenciando olist.order na coluna order_id.
-- `order_item`: fk_order_item_product referenciando product na coluna product_id.
-- `order_payment`: fk_order_payment_order referenciando olist.order na coluna order_id.
-- `order_review`: fk_order_review_order referenciando olist.order na coluna order_id.
+#### Definição das Chaves Primárias
+Após a remoção das duplicatas, as seguintes chaves primárias foram configuradas:
+- `customer`: `pk_customer` na coluna `customer_id`.
+- `geo_location`: `pk_geo_location` nas colunas `geolocation_zip_code_prefix`, `geolocation_city`, e `geolocation_state`.
+- `seller`: `pk_seller` na coluna `seller_id`.
+- `product`: `pk_product` na coluna `product_id`.
+- `olist.order`: `pk_order` na coluna `order_id`.
+- `order_item`: `pk_order_item` nas colunas `order_id` e `product_id`.
+- `order_review`: `pk_order_review` nas colunas `review_id` e `order_id`.
 
-#### Inserção de dados faltantes: 
-Criei views (vw_customer_without_geo_location e vw_seller_without_geo_location) para identificar registros de customer e seller que não possuíam correspondência em geo_location. Esses registros foram inseridos na tabela geo_location para garantir a integridade referencial.
-#### Remoção de colunas temporárias: 
-Após a remoção das duplicatas e a criação das chaves, as colunas temporárias `id` foram removidas das tabelas.
+#### Criação de Chaves Estrangeiras
+As chaves estrangeiras foram criadas para assegurar a integridade referencial entre as tabelas:
+- `customer`: `fk_customer_geo_location`, referenciando a tabela `geo_location` nas colunas `customer_zip_code_prefix`, `customer_city`, e `customer_state`.
+- `seller`: `fk_seller_geo_location`, referenciando a tabela `geo_location` nas colunas `seller_zip_code_prefix`, `seller_city`, e `seller_state`.
+- `order_item`: `fk_order_item_seller`, referenciando a tabela `seller` na coluna `seller_id`.
+- `olist.order`: `fk_order_customer`, referenciando a tabela `customer` na coluna `customer_id`.
+- `order_item`: `fk_order_item_order`, referenciando a tabela `olist.order` na coluna `order_id`.
+- `order_item`: `fk_order_item_product`, referenciando a tabela `product` na coluna `product_id`.
+- `order_payment`: `fk_order_payment_order`, referenciando a tabela `olist.order` na coluna `order_id`.
+- `order_review`: `fk_order_review_order`, referenciando a tabela `olist.order` na coluna `order_id`.
 
-### 4. Consultas:
-- [Consulta 4.1](https://github.com/viitoriamoreirac/atvd_APBD_olist/blob/main/04_queries.sql#L1)
-- [Consulta 4.2](https://github.com/viitoriamoreirac/atvd_APBD_olist/blob/main/04_queries.sql#L10)
-- [Consulta 4.3](https://github.com/viitoriamoreirac/atvd_APBD_olist/blob/main/04_queries.sql#L20)
-- [Consulta 4.4](https://github.com/viitoriamoreirac/atvd_APBD_olist/blob/main/04_queries.sql#L29)
-- [Consulta 4.5](https://github.com/viitoriamoreirac/atvd_APBD_olist/blob/main/04_queries.sql#L37)
-- [Consulta 4.6](https://github.com/viitoriamoreirac/atvd_APBD_olist/blob/main/04_queries.sql#L46)
-- [Consulta 4.7](https://github.com/viitoriamoreirac/atvd_APBD_olist/blob/main/04_queries.sql#L53)
-- [Consulta 4.8](https://github.com/viitoriamoreirac/atvd_APBD_olist/blob/main/04_queries.sql#L62)
+#### Inserção de Dados Faltantes
+Para garantir a integridade referencial, foram criadas duas views: `vw_customer_without_geo_location` e `vw_seller_without_geo_location`, com o objetivo de identificar registros de `customer` e `seller` sem correspondência na tabela `geo_location`. Após a identificação, esses dados foram inseridos corretamente na tabela `geo_location`.
 
-### 5. Otimização das consultas
+#### Remoção das Colunas Temporárias
+Após a eliminação das duplicatas e a criação das chaves, a coluna temporária `id` foi removida de todas as tabelas.
 
-#### Uso de indexes
-Foram criados e melhor aproveitados índices em tabelas como order, order_payment e order_item, reduzindo o número de leituras desnecessárias e melhorando a performance das junções.
-#### Reescrita das consultas
-Algumas consultas foram reescritas para eliminar JOINs que não agregavam informações relevantes, reduzindo o número de linhas processadas e melhorando o tempo de resposta
-#### Melhor aproveitamento de filtros
-Os filtros de data e outras condições foram ajustados para serem aplicados o mais cedo possível na execução da consulta, reduzindo o número de registros processados nas junções subsequentes.
-#### Uso de funções
-Funções como TIMESTAMPDIFF() foram utilizadas para cálculos de tempo de entrega e atrasos, otimizando a obtenção dos resultados sem necessidade de cálculos adicionais.
+### 4. Otimização de Consultas
 
-#### Resultados
-O resultado de `Explain Analyze` *antes* das melhorias pode ser conferido [aqui](/query_results/01_result_EXPLAIN_ANALYZE_before_changes.txt) <br>
-O resultado de `Explain Analyze` *depois* das melhorias pode ser conferido [aqui](/query_results/02_result_EXPLAIN_ANALYZE_after_changes.txt)
+#### Criação e Uso de Índices
+A criação de índices nas tabelas `order`, `order_payment` e `order_item` foi essencial para reduzir a leitura excessiva de dados e melhorar o desempenho das consultas, especialmente aquelas que realizam junções entre tabelas.
 
-- 4.1 Total de vendas por vendedor: O tempo de execução diminuiu de 1922ms para 1461ms, indicando melhora no desempenho, que pode ser explicada pelo remoção de um JOIN desnecessário, aproveitamente melhor os índices acessando order_payment diretamente, diminuindo a quantidade de linhas processadas.
+#### Reescrita das Consultas
+Algumas consultas foram reescritas para eliminar junções (JOINs) desnecessárias. Isso contribuiu para reduzir o número de registros processados, acelerando a execução das consultas.
 
-- 4.2 Top 10 clientes que mais compraram por período: O tempo de execução diminuiu de 386ms para 305ms, indicando uma melhora significativa, devido ao filtro de data ter sido alterado, além de melhor tempo no JOIN, sugerindo bom aproveitamento dos índices.
+#### Melhoria no Uso de Filtros
+A aplicação de filtros foi otimizada para ser realizada o mais cedo possível durante a execução das consultas, garantindo que apenas os registros necessários fossem processados nas etapas subsequentes.
 
-- 4.3 Média das avaliações por vendedor: O tempo de execução diminuiu de 3989ms para 1541ms, devido a diminuição de JOINS e bom aproveitament dos índices, reduzindo leituras desnecessárias.
-- 4.4 Pedidos entre duas datas: O tempo caiu de 2740ms para 989ms, indicando melhoria, após remoção de SUM() e GROUP BY, tornando a consulta mais eficiente.
-- 4.5 Produtos mais vendidos no período (Top 5): O tempo de execução diminuiu de 939ms para 244ms, devido ao bom aproveitamento do índiceidx_order_data, além de ter sido mais rápida na junção com order_item, o que pode estar relacionado aos filtros aplicados antes da junção.
-- 4.6 Pedidos com mais atrasos por período (Top 10): O tempo de execução diminuiu de 538ms para 91.9ms, tendo uma melhora significativa de desempenho, que pode ser explicada pelo uso da função TIMESTAMPDIFF().
-- 4.7 Clientes com maior valor em compras (Top 10): O tempo de execução diminuiu de 4695ms para 2190ms, pois a nova consulta evita um join desnecessário, entregando o mesmo resultado porém com melhor desempenho.
-- 4.8 Tempo médio de entrega por estado: O tempo de execução caiu de 1419ms para 578ms, tendo uma melhora significativa, que pode ser explicada pela diminuição no tempo de agregação, devido ao uso de TIMESTAMPDIFF().
+#### Utilização de Funções para Cálculos
+Funções como `TIMESTAMPDIFF()` foram utilizadas para realizar cálculos de tempo de entrega e atrasos, evitando a necessidade de cálculos manuais e melhorando a performance das consultas.
 
-### 6. Auditoria do BD
-Para garantir auditoria, rastreabilidade e integridade das informações é interessante criar uma tabela de auditoria para cada tabela existente no banco, onde serão registradas todas as mudanças efetuadas de forma automática, através de triggers que vão capturar as mudanças.
+#### Cosultas
+Abaixo estão os detalhes das melhorias nas consultas:
 
-Como pode ser conferido [nesse exemplo](/06_auditoria_db.sql) onde foi criada a tabela order_audit para registrar mudanças e definidos triggers para capturar atualizações (UPDATE) e exclusões (DELETE).
-- `trigger_audit_order`: Registra mudanças no status do pedido quando atualizado.
-- `trigger_audit_orders_delete`: Registra pedidos excluídos, armazenando o status antigo.
+- 4.1 **Total de Vendas por Vendedor**: A execução foi otimizada, passando de 1922ms para 1461ms, principalmente pela remoção de um JOIN desnecessário e pela melhor utilização dos índices.
+  
+- 4.2 **Top 10 Clientes que Mais Compraram por Período**: A execução passou de 386ms para 305ms, com a melhoria sendo atribuída à revisão do filtro de data e ao uso eficiente dos índices.
 
-### Backup
+- 4.3 **Média das Avaliações por Vendedor**: O tempo de execução diminuiu de 3989ms para 1541ms devido à eliminação de alguns JOINS e ao melhor aproveitamento dos índices.
 
-#### Redundância
-É importante manter mais de um tipo de backup, completo, incremental, diferencial e replicações, para garantir que caso haja necessidade, exista mais de uma maneira de recuperação, além de permitir que a mais eficiente seja usada para determinada situação. É importante também avaliar a periodicidade de cada um.
+- 4.4 **Pedidos Entre Duas Datas**: O tempo de execução caiu de 2740ms para 989ms, após a remoção de funções como `SUM()` e `GROUP BY`, tornando a consulta mais eficiente.
 
-#### Segurança
-O armazenamento dos backups pode ser feito localmente, na nuvem, ou de forma híbrida, ficando a critério do administrador, avaliando as necessidades atuais.
+- 4.5 **Produtos Mais Vendidos no Período (Top 5)**: A execução foi reduzida de 939ms para 244ms, com a melhoria decorrente do uso otimizado do índice `idx_order_data` e de junções mais rápidas com `order_item`.
 
-#### Validação de backups
-Realização de testes para verificar se backups não estão corrompidos e automatização de backups antigos, mantendo apenas um certo período, ex.: últimos 7 dias, dessa forma otimizando espaço.
+- 4.6 **Pedidos com Mais Atrasos por Período (Top 10)**: O tempo de execução caiu de 538ms para 91.9ms, com uma grande melhoria graças ao uso da função `TIMESTAMPDIFF()`.
 
-#### Monitoramento de backups
-Notificações de sucesso/falha de backup recebida via e-mail ou outro meio de comunicação.
+- 4.7 **Clientes com Maior Valor em Compras (Top 10)**: O tempo de execução foi reduzido de 4695ms para 2190ms com a eliminação de um JOIN desnecessário.
+
+- 4.8 **Tempo Médio de Entrega por Estado**: A execução foi otimizada de 1419ms para 578ms, devido à diminuição no tempo de agregação, facilitada pelo uso de `TIMESTAMPDIFF()`.
+
+### 5. Auditoria do Banco de Dados
+
+Para garantir a auditoria, rastreabilidade e integridade das informações no banco de dados, foi criada uma tabela de auditoria, onde todas as alterações feitas nas tabelas são registradas automaticamente por meio de triggers.
+
+- A tabela `order_audit` foi criada para registrar as modificações nos pedidos.
+- A trigger `trigger_audit_order` captura mudanças no status dos pedidos.
+- A trigger `trigger_audit_orders_delete` registra a exclusão de pedidos, armazenando o status anterior.
+
+#### Estratégias de Backup e Redundância
+
+Manter múltiplos tipos de backup (completo, incremental, diferencial e replicação) é essencial para garantir a recuperação dos dados em caso de falha. Além disso, a periodicidade de cada tipo de backup deve ser avaliada para otimizar o processo.
+
+#### Validação de Backups
+
+É crucial realizar testes regulares nos backups para garantir que não estejam corrompidos. Além disso, a automação da remoção de backups antigos, mantendo apenas os mais recentes (por exemplo, dos últimos 7 dias), ajuda a otimizar o uso do espaço de armazenamento.
+
+#### Monitoramento de Backups
+
+O monitoramento contínuo dos backups deve ser feito, com notificações sobre o sucesso ou falha das operações enviadas por e-mail ou outros canais de comunicação.
