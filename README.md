@@ -1,3 +1,4 @@
+
 # Olist Database - Projeto e Otimização
 
 Este repositório contém o projeto de um banco de dados para a Olist, com foco na criação, manutenção, e otimização de dados para análise de vendas e performance de vendedores. 
